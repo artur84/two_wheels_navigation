@@ -2,25 +2,42 @@
 
 	<!-- Some general parameters -->
 	<param name="use_sim_time" value="true" />
-	<rosparam file="$(find nav2d_tutorials)/param/ros.yaml"/>
+	<rosparam file="$(find two_wheels_navigation)/param/ros.yaml"/>
+	<!-- Start the two wheels simulator -->
+	<!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find two_wheels_description)/world/walls.world"/> 
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/> <!-- Inert - see gazebo_ros_pkgs issue #491 -->
+    <arg name="recording" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
 
-	<!-- Start Stage simulator with a given environment -->
-	<node name="Stage" pkg="stage_ros" type="stageros" args="$(find nav2d_tutorials)/world/tutorial.world">
-		<param name="base_watchdog_timeout" value="0" />
-	</node>
+  <!-- Start hector slam-->
+  <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
+
+  <include file="$(find myhector_slam_config)/launch/mapping_default_ok.launch"/>
+
+  <include file="$(find hector_geotiff)/launch/geotiff_mapper.launch">
+    <arg name="trajectory_source_frame_name" value="scanmatcher_frame"/>
+    <arg name="map_file_path" value="$(arg geotiff_map_file_path)"/>
+  </include>
+
+  
+  <include file="$(find two_wheels_description)/launch/spawn.launch"/>
+  
+    
 
 	<!-- Start the Operator to control the simulated robot -->
 	<node name="Operator" pkg="nav2d_operator" type="operator" >
 		<remap from="scan" to="base_scan"/>
-		<rosparam file="$(find nav2d_tutorials)/param/operator.yaml"/>
-		<rosparam file="$(find nav2d_tutorials)/param/costmap.yaml" ns="local_map" />
+		<rosparam file="$(find two_wheels_navigation)/param/operator.yaml"/>
+		<rosparam file="$(find two_wheels_navigation)/param/costmap.yaml" ns="local_map" />
 	</node>
 
-	<!-- Start the joystick-driver and remote-controller for operation-->
-	<node name="Joystick" pkg="joy" type="joy_node" />
-	<node name="Remote" pkg="nav2d_remote" type="remote_joy" />
-
 	<!-- RVIZ to view the visualization -->
-	<node name="RVIZ" pkg="rviz" type="rviz" args=" -d $(find nav2d_tutorials)/param/tutorial1.rviz" />
+	<node name="RVIZ" pkg="rviz" type="rviz" args=" -d $(find two_wheels_navigation)/param/tutorial1.rviz" />
 
 </launch>

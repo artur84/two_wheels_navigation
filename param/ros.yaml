@@ -4,7 +4,7 @@
 ### TF frames #############################################
 laser_frame: base_laser_link
 robot_frame: base_link
-odometry_frame: odom
+odometry_frame: base_link
 offset_frame: offset
 map_frame: map
 
