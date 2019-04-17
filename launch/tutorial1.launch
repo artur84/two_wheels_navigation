@@ -1,19 +1,21 @@
 <launch>
-
-	<!-- Some general parameters -->
+<!-- This launches the semi-autonomous navigation system for the two_wheels_description robot -->
+  
 	<param name="use_sim_time" value="true" />
-	<rosparam file="$(find two_wheels_navigation)/param/ros.yaml"/>
 	<!-- Start the two wheels simulator -->
 	<!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+  <!--include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find two_wheels_description)/world/walls.world"/> 
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
-    <arg name="headless" value="false"/> <!-- Inert - see gazebo_ros_pkgs issue #491 -->
-    <arg name="recording" value="false"/>
+    <arg name="headless" value="false"/--> <!-- Inert - see gazebo_ros_pkgs issue #491 -->
+    <!--arg name="recording" value="false"/>
     <arg name="debug" value="false"/>
-  </include>
+  </include--> 
+
+  <!-- Add a necessary transformation to link odom and base_link frames -->
+  <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 10" />
 
   <!-- Start hector slam-->
   <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
@@ -26,16 +28,22 @@
   </include>
 
   
-  <include file="$(find two_wheels_description)/launch/spawn.launch"/>
+  
   
     
 
-	<!-- Start the Operator to control the simulated robot -->
+	<!-- NAV2D SEMI-AUTONOMOUS NAVIGATION-->
+  <!-- Some general parameters -->
+	<rosparam file="$(find two_wheels_navigation)/param/ros.yaml"/>
+  <!-- Start the Operator to control the simulated robot -->
 	<node name="Operator" pkg="nav2d_operator" type="operator" >
 		<remap from="scan" to="base_scan"/>
 		<rosparam file="$(find two_wheels_navigation)/param/operator.yaml"/>
 		<rosparam file="$(find two_wheels_navigation)/param/costmap.yaml" ns="local_map" />
 	</node>
+
+  <!-- Start the teleoperation node -->
+  <node name="teleop_semiauto" pkg="two_wheels_navigation" type="teleop_semiauto.py" output="screen" />
 
 	<!-- RVIZ to view the visualization -->
 	<node name="RVIZ" pkg="rviz" type="rviz" args=" -d $(find two_wheels_navigation)/param/tutorial1.rviz" />
