@@ -12,7 +12,7 @@ import tf
 import math
 #This class will receive a number and an increment and it will publish the 
 # result of adding number+increment in a recursive way.
-class Adder_Class():
+class VelToOdom():
     def __init__(self):
         """ Parameters
         """
@@ -37,20 +37,33 @@ class Adder_Class():
         self.current_time=rospy.Time.now()
         odom_quat = Quaternion()
         odom_trans = TransformStamped()
-
+        odom_msg_= Odometry()
+        print "while"
         while not rospy.is_shutdown():
+            print "time"
+            self.prev_time=deepcopy(self.current_time)
             self.current_time=rospy.Time.now() #Get the current time to stamp it
+            #Update the robot's pose
+            delta_t=self.current_time.to_sec()-self.prev_time.to_sec()
+            delta_theta=self.angular_vel*delta_t # d=v.t
+            self.orientationz=self.orientationz+delta_theta
+            #vx=v.cosQ  and vy=v.sinQ
+            vx=self.linear_vel*np.cos(self.orientationz)
+            vy=self.linear_vel*np.sin(self.orientationz)
+            #d=v.t
+            self.positionx=self.positionx+vx*delta_t
+            self.positiony=self.positiony+vy*delta_t
             odom_quat=tf.transformations.quaternion_about_axis(self.orientationz,(0,0,1))
+            
             # Create the odometry transformation
-            odom_trans.header.stamp=self.current_time
-            odom_trans.header.frame_id = self.tf_prefix + "/odom"
-            odom_trans.child_frame_id = self.tf_prefix + "/base_link"
-            odom_trans.transform.translation.x = self.positionx
-            odom_trans.transform.translation.y = self.positiony
-            odom_trans.transform.translation.z = 0.0
-            odom_trans.transform.rotation = odom_quat
+            parent_frame = self.tf_prefix + "/odom"
+            child_frame = self.tf_prefix + "/base_link"
+            translation=(self.positionx,self.positiony, 0.0)
             # send the transformation between odom and base_link
-            self.tf_broadcaster.sendTransform(odom_trans)
+            try:
+                self.tf_broadcaster.sendTransform(translation, odom_quat, self.current_time, child_frame, parent_frame )
+            except:
+                rospy.logerr("could not broadcast transformation")
             #Now send Odometry message and publish
             odom_msg_.pose.pose.position.x = self.positionx
             odom_msg_.pose.pose.position.y = self.positiony
@@ -61,28 +74,17 @@ class Adder_Class():
             odom_msg_.header.stamp = self.current_time
             #The Odometry also has the velocities
             odom_msg_.twist.twist.linear.x =  self.linear_vel
-            odom_msg_.twist.twist.linear.y =  0
+            odom_msg_.twist.twist.linear.y =  0.0
             odom_msg_.twist.twist.angular.z = self.angular_vel
-            odom_pub_.publish(odom_msg_)
+            self.pub_odom.publish(odom_msg_)
             
             r.sleep()
 
     def cmd_vel_cb(self, msg):
         ## This function receives a Twist and copies the linear and angular velocities
-        self.prev_time=deepcopy(self.current_time)
-        self.current_time=rospy.Time.now()
         self.linear_vel=msg.linear.x
         self.angular_vel=msg.angular.z
-        #Update the robot's pose
-        delta_t=self.current_time.to_sec()-self.prev_time.to_sec()
-        delta_theta=self.angular_vel*delta_t # d=v.t
-        self.orientationz=self.orientationz+delta_theta
-        #vx=v.cosQ  and vy=v.sinQ
-        vx=self.linear_vel*np.cos(self.orientationz)
-        vy=self.linear_vel*np.sin(self.orientationz)
-        #d=v.t
-        self.positionx=self.positionx+vx*delta_t
-        self.positiony=self.positiony+vy*delta_t
+        
 
 
     def cleanup(self):
