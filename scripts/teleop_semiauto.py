@@ -29,12 +29,12 @@ def go_backward(msg):
 
 def turn_right(msg):
     msg.Velocity = speed
-    msg.Turn = 1.0
+    msg.Turn = 0.5
     pub.publish(msg)
 
 def turn_left(msg):
     msg.Velocity = speed
-    msg.Turn = -1.0
+    msg.Turn = -0.5
     pub.publish(msg)
 
 def stop(msg):
@@ -59,20 +59,20 @@ def teleop():
     rate = rospy.Rate(100) # 10hz
     
     key = ""
-    print("Use W,A,S,D and Space to move the robot")
+    print("Use i,j,k,l, and ,  to move the robot")
     while not rospy.is_shutdown():
         key = "x"
         key = getKey()
         key = key.lower()
-        if(key == 'w'):
+        if(key == 'i'):
             go_forward(msg)
-        elif(key == 's'):
+        elif(key == ','):
             go_backward(msg)
-        elif(key == 'a'):
+        elif(key == 'j'):
             turn_left(msg)
-        elif(key == 'd'):
+        elif(key == 'l'):
             turn_right(msg)
-        elif(key == ' '):
+        elif(key == 'k'):
             stop(msg)
         elif(key == '\x03'):
             break
