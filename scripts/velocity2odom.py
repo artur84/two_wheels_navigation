@@ -31,7 +31,7 @@ class VelToOdom():
         self.positionx= 0.0     # The robot's estimated position in x
         self.positiony= 0.0     # The robot's estimated position in y
         self.orientationz= 0.0  # The robot's estimated orientation about z
-        r = rospy.Rate(10)              #1Hz
+        r = rospy.Rate(50)              #1Hz
         print "Node initialized 1hz"
         self.tf_broadcaster = tf.TransformBroadcaster()  # NOTE THIS: the listener should be declared in the class
         self.current_time=rospy.Time.now()

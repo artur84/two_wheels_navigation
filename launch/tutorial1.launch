@@ -27,7 +27,7 @@
     <arg name="map_file_path" value="$(arg geotiff_map_file_path)"/>
   </include>
 
-  
+  <!--node pkg="two_wheels_navigation" type="velocity2odom.py" name="velocity2odom"/-->
   
   
     
