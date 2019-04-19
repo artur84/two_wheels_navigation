@@ -1,0 +1,10 @@
+<!-- Laser filter sample-->
+
+<launch>
+ <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="scan_to_scan_filter_chain" output="screen" >
+    <remap from="scan" to="base_scan"/>
+    <remap from="scan_filtered" to="scan_filtered"/>
+    <rosparam file="$(find two_wheels_navigation)/laser_filters_config/example_config.yaml" command="load"/>
+ </node>
+  
+</launch>
