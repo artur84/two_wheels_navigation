@@ -1,7 +1,16 @@
 scan_filter_chain:
+### Interpolation filter: For any measurement in the scan which is invalid, the interpolation comes up with a measurement which is 
+### an interpolation between the surrounding good values.
+#- name: interpolation
+#   type: InterpolationFilter
+### LaserSCanIntensityFilter:
+# This filter removes all measuements from the sensor_msgs/LaserScan which have an intensity greater than
+# upper_threshold or less than lower_threshold. These points are "removed" by setting the corresponding 
+# range value to range_max+1, which is assumed to be an error case. 
 - name: intensity
   type: laser_filters/LaserScanIntensityFilter
   params: 
     lower_threshold: 8000
     upper_threshold: 100000
     disp_histogram: 0 
+    range_max: 8

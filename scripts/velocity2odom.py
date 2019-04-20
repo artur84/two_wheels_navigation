@@ -10,9 +10,9 @@ import rospy
 from copy import deepcopy
 import tf
 import math
-#This class will receive a number and an increment and it will publish the 
-# result of adding number+increment in a recursive way.
+
 class VelToOdom():
+    #This node recieves a Twist message from the cmd_vel topic and publishes odometry
     def __init__(self):
         """ Parameters
         """
@@ -31,7 +31,7 @@ class VelToOdom():
         self.positionx= 0.0     # The robot's estimated position in x
         self.positiony= 0.0     # The robot's estimated position in y
         self.orientationz= 0.0  # The robot's estimated orientation about z
-        r = rospy.Rate(50)              #1Hz
+        r = rospy.Rate(30)              #1Hz
         print "Node initialized 1hz"
         self.tf_broadcaster = tf.TransformBroadcaster()  # NOTE THIS: the listener should be declared in the class
         self.current_time=rospy.Time.now()
@@ -57,9 +57,9 @@ class VelToOdom():
             
             # Create the odometry transformation
             parent_frame = self.tf_prefix + "/odom"
-            child_frame = self.tf_prefix + "/base_link"
+            child_frame = self.tf_prefix + "/base_footprint"
             translation=(self.positionx,self.positiony, 0.0)
-            # send the transformation between odom and base_link
+            # send the transformation between odom and base_footprint
             try:
                 self.tf_broadcaster.sendTransform(translation, odom_quat, self.current_time, child_frame, parent_frame )
             except:
@@ -70,7 +70,7 @@ class VelToOdom():
             odom_msg_.pose.pose.position.z = 0.0
             odom_msg_.pose.pose.orientation = odom_quat
             odom_msg_.header.frame_id = self.tf_prefix + "/odom"
-            odom_msg_.child_frame_id = self.tf_prefix + "/base_link"
+            odom_msg_.child_frame_id = self.tf_prefix + "/base_footprint"
             odom_msg_.header.stamp = self.current_time
             #The Odometry also has the velocities
             odom_msg_.twist.twist.linear.x =  self.linear_vel

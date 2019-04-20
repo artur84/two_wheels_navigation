@@ -12,8 +12,8 @@ static_map: false
 #begin - COMMENT these lines if you set static_map to true
 rolling_window: true
 width: 4
-height: 4
-resolution: 0.025
+height: 5
+resolution: 0.02
 #end - COMMENT these lines if you set static_map to true
 
 map_type: costmap
@@ -25,8 +25,8 @@ min_obstacle_height: 0.0
 max_obstacle_height: 1.4
 raytrace_range: 8.0
 
-robot_radius: 0.15
-inflation_radius: 0.2
+robot_radius: 0.18
+inflation_radius: 0.22
 cost_scaling_factor: 0.8
 lethal_cost_threshold: 80
 observation_sources: scan
