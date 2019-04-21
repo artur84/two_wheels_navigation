@@ -22,10 +22,10 @@
 	<!-- Start particle filter to track the robot's position -->
 	<node name="SelfLocalizer" pkg="nav2d_localizer" type="localizer">
 		<remap from="scan" to="base_scan"/>
-		<param name="min_particles" type="int" value="300"/>
-		<param name="max_particles" type="int" value="4000"/>
+		<param name="min_particles" type="int" value="600"/>
+		<param name="max_particles" type="int" value="5000"/>
 		<param name="min_translation" value="0.0"/>
-		<param name="min_rotation" value="0.1"/>
+		<param name="min_rotation" value="0.05"/>
 	</node>
 
 	<!-- Start the Navigator to move the robot autonomously -->
