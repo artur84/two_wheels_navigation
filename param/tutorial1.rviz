@@ -34,6 +34,8 @@ Panels:
     Name: Time
     SyncMode: 0
     SyncSource: Image
+Toolbars:
+  toolButtonStyle: 2
 Visualization Manager:
   Class: ""
   Displays:
@@ -74,15 +76,17 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
-        base_link_simulated:
-          Value: true
         camera1_link:
           Value: true
         left_grip_link:
           Value: true
+        map:
+          Value: true
         odom:
           Value: true
         right_grip_link:
+          Value: true
+        scanmatcher_frame:
           Value: true
       Marker Scale: 0.5
       Name: TF
@@ -90,21 +94,22 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base_link:
-            base_laser_link:
-              arm_base_link:
-                arm_link_01:
-                  arm_link_02:
-                    arm_link_03:
-                      arm_link_04:
-                        left_grip_link:
-                          {}
-                        right_grip_link:
-                          {}
-            camera1_link:
-              {}
-          base_link_simulated:
+        map:
+          odom:
+            base_link:
+              base_laser_link:
+                arm_base_link:
+                  arm_link_01:
+                    arm_link_02:
+                      arm_link_03:
+                        arm_link_04:
+                          left_grip_link:
+                            {}
+                          right_grip_link:
+                            {}
+              camera1_link:
+                {}
+          scanmatcher_frame:
             {}
       Update Interval: 0
       Value: true
@@ -185,7 +190,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 51.3294258
+      Scale: 148.88176
       Target Frame: base_link
       Value: TopDownOrtho (rviz)
       X: 0.599791646

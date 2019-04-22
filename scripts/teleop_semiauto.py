@@ -17,29 +17,24 @@ Moving around:
    j    k    l
    m    ,    .
 
-+/- : increase/decrease max speeds by 10%
++/- : increase/decrease max speeds
 space tab: change teleop mode
 anything else : stop
 
 CTRL-C to quit
 """
-#(linear x, angular z)
+#(linear x, angular z, linear(cmd), Turn(cmd))
 moveBindings = {
-    'i':( 1,  0),
-    'o':( 1, -1),
-    'l':( 0.1, -1),
-    '.':(-1,  1),
-    ',':(-1,  0),
-    'm':(-1,  1),
-    'j':( 0.1,  1),
-    'u':( 1,  1),
-    'k':( 0,  0),
+    'i':( 1,    0,   1,   0),
+    'o':( 1,   -1,   1,   1),
+    'l':( 0,   -1, 0.4,   1.5),
+    '.':(-1,    1,  -1,  -1),
+    ',':(-1,    0,  -1,   0),
+    'm':(-1,    1,  -1,  -1),
+    'j':( 0,    1, 0.4,  -1.5),
+    'u':( 1,    1,   1,  -1),
+    'k':( 0,    0,   0,   0),
        }
-
-speedBindings = {#To change the speed
-    '+':(1.1, 1.1),
-    '-':(.9, .9),
-      }
 
 def getKey():
     tty.setraw(sys.stdin.fileno())
@@ -49,7 +44,9 @@ def getKey():
     return key
 
 speed = 0.4 #[msec] linear speed multiplier
-turn = 0.3 #[rad/sec] angular speed multiplier
+turn = 0.2 #[rad/sec] angular speed multiplier
+turn_inc = 0.025 #increment for the angular vel when the +/- keys are pressed.
+speed_inc = 0.05 #increment for the linear vel when the +/- keys are pressed.
 mode = 0  #mode for the nav2D
 
 def vels(speed, turn, mode):
@@ -80,26 +77,32 @@ if __name__ == "__main__":
                 key_vel.angular.x = 0; key_vel.angular.y = 0; key_vel.angular.z = th * turn
                 vel_pub.publish(key_vel)
                 #nav2d cmd velocity
-                nav2d_cmd.Velocity=key_vel.linear.x
-                nav2d_cmd.Turn = -3*key_vel.angular.z
+                nav2d_cmd.Velocity=moveBindings[key][2]*speed
+                nav2d_cmd.Turn = moveBindings[key][3]*turn
                 nav2d_cmd.Mode = mode 
                 nav2d_cmd_pub.publish(nav2d_cmd)
 
                 print nav2d_cmd
                 
-            elif key in speedBindings.keys():
-                speed = speed * speedBindings[key][0]
-                turn = turn * speedBindings[key][1]
+            elif key == '+':
+                speed = speed + speed_inc
+                turn = turn + turn_inc
 
                 print vels(speed, turn, mode)
                 if (status == 14):
                     print msg
                 status = (status + 1) % 15
-                #nav2d cmd velocity
-                nav2d_cmd.Velocity=key_vel.linear.x
-                nav2d_cmd.Turn = -3*key_vel.angular.z
-                nav2d_cmd.Mode = mode 
-                nav2d_cmd_pub.publish(nav2d_cmd)
+                
+                 
+            elif key == '-':
+                speed = speed + speed_inc
+                turn = turn + turn_inc
+
+                print vels(speed, turn, mode)
+                if (status == 14):
+                    print msg
+                status = (status + 1) % 15
+               
 
             elif key == ' ':
                 if mode == 0:
@@ -108,8 +111,8 @@ if __name__ == "__main__":
                     mode=0
                 rospy.loginfo("mode: %d", mode)
                 #nav2d cmd velocity
-                nav2d_cmd.Velocity=key_vel.linear.x
-                nav2d_cmd.Turn = -3*key_vel.angular.z
+                nav2d_cmd.Velocity=moveBindings[key][2]*speed
+                nav2d_cmd.Turn = moveBindings[key][3]*turn
                 nav2d_cmd.Mode = mode 
                 nav2d_cmd_pub.publish(nav2d_cmd)
 
