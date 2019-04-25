@@ -1,0 +1,9 @@
+<!-- this launches the required odometry node for the robot -->
+<launch>
+    <node pkg="rf2o_laser_odometry" type="rf2o_laser_odometry_node" name="odometry_node">
+        <param name="laser_scan_topic" value="base_scan"/>
+        <param name="freq" value="20"/><!-- Odometry publication rate (Hz). Default 10Hz-->
+        <param name="base_frame_id" value="base_footprint"/>
+        <param name="odom_frame_id" value="odom"/>
+    </node>
+</launch>

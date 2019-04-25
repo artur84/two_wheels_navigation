@@ -57,7 +57,7 @@ class VelToOdom():
             
             # Create the odometry transformation
             parent_frame = self.tf_prefix + "/odom"
-            child_frame = self.tf_prefix + "/base_footprint"
+            child_frame = self.tf_prefix + "/base_link"
             translation=(self.positionx,self.positiony, 0.0)
             # send the transformation between odom and base_footprint
             try:
@@ -69,8 +69,8 @@ class VelToOdom():
             odom_msg_.pose.pose.position.y = self.positiony
             odom_msg_.pose.pose.position.z = 0.0
             odom_msg_.pose.pose.orientation = odom_quat
-            odom_msg_.header.frame_id = self.tf_prefix + "/odom"
-            odom_msg_.child_frame_id = self.tf_prefix + "/base_footprint"
+            odom_msg_.header.frame_id = parent_frame
+            odom_msg_.child_frame_id = child_frame
             odom_msg_.header.stamp = self.current_time
             #The Odometry also has the velocities
             odom_msg_.twist.twist.linear.x =  self.linear_vel
