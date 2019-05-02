@@ -21,6 +21,9 @@ class GoogleRecognizer:
     It records sound from microphone until silence is found and save it as WAV and then converts
     it to FLAC format. Finally, the file is sent to the Google service and the result is retreived
     and published as a ROS topic.
+
+    PREREQUISITES: Before starting this node please install the following packages in your system (Tested in Ubuntu 16.04)
+    $ sudo apt-get install python-ndg-httpsclient python-multipartposthandler python-urllib3 python-pyaudio flac 
     """
     def __init__(self):
         """ The Constructor of the class
