@@ -1,0 +1,62 @@
+<launch>
+  <param name="/use_sim_time" value="true"/>
+
+  <node name="teleop_semiauto" pkg="two_wheels_navigation" type="teleop_semiauto.py" output="screen" />
+
+ <!-- <node name="view_wheels_speed" pkg="two_wheels_navigation" type="view_wheels_speed.py" output="screen"/> -->
+
+
+  <!--STATIC TF-->
+  <!--node pkg="tf" type="static_transform_publisher" name="static_transform_baseLink_laser" args="0.195 0 0.145 -3.141592 0 0  base_link laser 10" /-->
+<!--  <node pkg="tf" type="static_transform_publisher" name="static_transform_odom_baseLink" args="0 0 0 0 0 0 odom base_link 10" />
+-->
+  <node pkg="tf" type="static_transform_publisher" name="static_transform_scanmatcher_baseLink" args="0 0 0 0 0 0 scanmatcher_frame base_link 10" />
+
+  <!--HECTOR SLAM-->
+
+  <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
+
+  <include file="$(find two_wheels_navigation)/launch/mapping_default.launch"/>
+
+  <include file="$(find hector_geotiff)/launch/geotiff_mapper.launch">
+    <arg name="trajectory_source_frame_name" value="scanmatcher_frame"/>
+    <arg name="map_file_path" value="$(arg geotiff_map_file_path)"/>
+  </include> 
+
+   <!-- Autonomous part using NAV2D -->
+
+   <!-- Some general parameters -->
+   <rosparam file="$(find two_wheels_navigation)/param/ros.yaml"/>
+
+
+   <!-- Start the Operator to control the simulated robot -->
+   <node name="Operator" pkg="nav2d_operator" type="operator" >
+      <remap from="scan" to="base_scan"/>
+      <rosparam file="$(find two_wheels_navigation)/param/operator.yaml"/>
+      <rosparam file="$(find two_wheels_navigation)/param/costmap.yaml" ns="local_map" />
+   </node>
+
+
+   <!--  Start Mapper to generate map from laser scans  -->
+  <node name="Mapper" pkg="nav2d_karto" type="mapper">
+    <rosparam file="$(find two_wheels_navigation)/param/mapper.yaml"/>
+  </node>
+
+
+  <!-- Start the Navigator to move the robot autonomously -->
+ <node name="Navigator" pkg="nav2d_navigator" type="navigator">
+    <rosparam file="$(find two_wheels_navigation)/param/navigator.yaml"/>
+  </node>
+
+  <node name="GetMap" pkg="nav2d_navigator" type="get_map_client" />
+  <node name="Explore" pkg="nav2d_navigator" type="explore_client" />
+  <node name="SetGoal" pkg="nav2d_navigator" type="set_goal_client" /> 
+
+
+   <!-- RVIZ to view the visualization -->
+   <node name="RVIZ" pkg="rviz" type="rviz" args=" -d $(find two_wheels_navigation)/param/tutorial3.rviz" />
+
+
+
+
+</launch>

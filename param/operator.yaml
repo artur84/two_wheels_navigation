@@ -1,6 +1,5 @@
 # Maximum velocity command the operator will send to the robot (in m/s)
-max_velocity: 0.33
-
+max_velocity: 0.7 #1.0 for autonomous 0.33 for semi-autonomous navigation
 # If set to true, the selected best direction is published as a GridCells-Message
 publish_route: true
 
@@ -10,6 +9,6 @@ safety_decay: 0.90
 
 # The importance weights of the 3 action values
 distance_weight: 1
-safety_weight: 1.5
-conformance_weight: 1
-continue_weight: 0.1
+safety_weight: 1
+conformance_weight: 10
+continue_weight: 0
