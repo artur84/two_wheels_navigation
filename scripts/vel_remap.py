@@ -23,13 +23,13 @@ class VelRemap():
 
     def cmd_vel_cb(self, msg):
         ## This function receives a Twist and copies the linear and angular velocities
-        self.cmd_vel_msg.angular.z=msg.angular.z*4
-        self.cmd_vel_msg.linear.x=msg.linear.x*0.7
+        self.cmd_vel_msg.angular.z=msg.angular.z
+        self.cmd_vel_msg.linear.x=msg.linear.x*0.5
         #limit the maximum values
-        if self.cmd_vel_msg.angular.z>0.7:
-            self.cmd_vel_msg.angular.z=0.7
-        if self.cmd_vel_msg.linear.x>0.7:
-            self.cmd_vel_msg.linear.x=0.7
+        if self.cmd_vel_msg.angular.z>0.4:
+            self.cmd_vel_msg.angular.z=0.4
+        if self.cmd_vel_msg.linear.x>0.6:
+            self.cmd_vel_msg.linear.x=0.6
 
         self.pub_cmd_vel.publish(self.cmd_vel_msg)
 
