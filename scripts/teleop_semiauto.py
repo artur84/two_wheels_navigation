@@ -27,11 +27,11 @@ CTRL-C to quit
 moveBindings = {
     'i':( 1,    0,   1,   0),
     'o':( 1,   -1,   1,   1),
-    'l':( 0,   -1, 0.4,   1.5),
-    '.':(-1,    1,  -1,  -1),
+    'l':( 0,   -1,   0.5,   1),
+    '.':(-1,    1,  -1,  1),
     ',':(-1,    0,  -1,   0),
     'm':(-1,    1,  -1,  -1),
-    'j':( 0,    1, 0.4,  -1.5),
+    'j':( 0,    1,   0.5,  -1),
     'u':( 1,    1,   1,  -1),
     'k':( 0,    0,   0,   0),
        }
@@ -43,10 +43,10 @@ def getKey():
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
     return key
 
-speed = 0.4 #[msec] linear speed multiplier
-turn = 0.2 #[rad/sec] angular speed multiplier
-turn_inc = 0.025 #increment for the angular vel when the +/- keys are pressed.
-speed_inc = 0.05 #increment for the linear vel when the +/- keys are pressed.
+speed = 0.3 #[msec] linear speed multiplier
+turn = 0.1 #[rad/sec] angular speed multiplier
+turn_inc = turn*0.1 #increment for the angular vel when the +/- keys are pressed.
+speed_inc = speed*0.2 #increment for the linear vel when the +/- keys are pressed.
 mode = 0  #mode for the nav2D
 
 def vels(speed, turn, mode):
@@ -78,12 +78,12 @@ if __name__ == "__main__":
                 vel_pub.publish(key_vel)
                 #nav2d cmd velocity
                 nav2d_cmd.Velocity=moveBindings[key][2]*speed
-                nav2d_cmd.Turn = moveBindings[key][3]*turn
-                nav2d_cmd.Mode = mode 
+                nav2d_cmd.Turn = moveBindings[key][3]*turn*3
+                nav2d_cmd.Mode = mode
                 nav2d_cmd_pub.publish(nav2d_cmd)
 
                 print nav2d_cmd
-                
+
             elif key == '+':
                 speed = speed + speed_inc
                 turn = turn + turn_inc
@@ -92,17 +92,17 @@ if __name__ == "__main__":
                 if (status == 14):
                     print msg
                 status = (status + 1) % 15
-                
-                 
+
+
             elif key == '-':
-                speed = speed + speed_inc
-                turn = turn + turn_inc
+                speed = speed - speed_inc
+                turn = turn - turn_inc
 
                 print vels(speed, turn, mode)
                 if (status == 14):
                     print msg
                 status = (status + 1) % 15
-               
+
 
             elif key == ' ':
                 if mode == 0:
@@ -113,7 +113,7 @@ if __name__ == "__main__":
                 #nav2d cmd velocity
                 nav2d_cmd.Velocity=moveBindings[key][2]*speed
                 nav2d_cmd.Turn = moveBindings[key][3]*turn
-                nav2d_cmd.Mode = mode 
+                nav2d_cmd.Mode = mode
                 nav2d_cmd_pub.publish(nav2d_cmd)
 
 
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     finally:
         key_vel = Twist()
-       
+
         key_vel.linear.x = 0; key_vel.linear.y = 0; key_vel.linear.z = 0
         key_vel.angular.x = 0; key_vel.angular.y = 0; key_vel.angular.z = 0
         nav2d_cmd.Velocity=key_vel.linear.x; nav2d_cmd.Turn = key_vel.angular.z

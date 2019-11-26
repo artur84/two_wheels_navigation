@@ -1,7 +1,7 @@
 global_frame: odom
 robot_base_frame: base_link
-update_frequency: 10.0
-publish_frequency: 5.0
+update_frequency: 20.0
+publish_frequency: 1.0
 
 #set if you want the voxel map published
 publish_voxel_map: true
@@ -11,9 +11,9 @@ static_map: false
 
 #begin - COMMENT these lines if you set static_map to true
 rolling_window: true
-width: 5
-height: 5
-resolution: 0.025
+width: 6
+height: 6
+resolution: 0.02
 #end - COMMENT these lines if you set static_map to true
 
 map_type: costmap

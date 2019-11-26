@@ -1,3 +1,8 @@
+<!-- This launch file is intended to be used with the two_wheels_description package
+			To start a simulation you must first execute:
+			
+-->
+
 <launch>
 	<!-- Some general parameters -->
 	<param name="use_sim_time" value="true" />
@@ -33,7 +38,7 @@
 	<node name="Navigator" pkg="nav2d_navigator" type="navigator">
 		<rosparam file="$(find two_wheels_navigation)/param/navigator.yaml"/>
 	</node>
-    
+
     <node name="GetMap" pkg="nav2d_navigator" type="get_map_client" />
     <node name="Explore" pkg="nav2d_navigator" type="explore_client" />
   	<node name="SetGoal" pkg="nav2d_navigator" type="set_goal_client" />

@@ -2,6 +2,7 @@
   <param name="/use_sim_time" value="true"/>
 
   <node name="teleop_semiauto" pkg="two_wheels_navigation" type="teleop_semiauto.py" output="screen" />
+  <node name="vel_remap" pkg="two_wheels_navigation" type="vel_remap.py"/>
 
  <!-- <node name="view_wheels_speed" pkg="two_wheels_navigation" type="view_wheels_speed.py" output="screen"/> -->
 
@@ -10,18 +11,18 @@
   <!--node pkg="tf" type="static_transform_publisher" name="static_transform_baseLink_laser" args="0.195 0 0.145 -3.141592 0 0  base_link laser 10" /-->
 <!--  <node pkg="tf" type="static_transform_publisher" name="static_transform_odom_baseLink" args="0 0 0 0 0 0 odom base_link 10" />
 -->
-  <node pkg="tf" type="static_transform_publisher" name="static_transform_scanmatcher_baseLink" args="0 0 0 0 0 0 scanmatcher_frame base_link 10" />
+  <!--node pkg="tf" type="static_transform_publisher" name="static_transform_scanmatcher_baseLink" args="0 0 0 0 0 0 scanmatcher_frame base_link 10" /-->
 
   <!--HECTOR SLAM-->
 
   <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
 
-  <include file="$(find two_wheels_navigation)/launch/mapping_default.launch"/>
+  <include file="$(find two_wheels_navigation)/launch/mapping_autonomous_mode.launch"/>
 
   <include file="$(find hector_geotiff)/launch/geotiff_mapper.launch">
     <arg name="trajectory_source_frame_name" value="scanmatcher_frame"/>
     <arg name="map_file_path" value="$(arg geotiff_map_file_path)"/>
-  </include> 
+  </include>
 
    <!-- Autonomous part using NAV2D -->
 
@@ -32,14 +33,27 @@
    <!-- Start the Operator to control the simulated robot -->
    <node name="Operator" pkg="nav2d_operator" type="operator" >
       <remap from="scan" to="base_scan"/>
+      <remap from="cmd_vel" to="cmd_vel_input"/>
       <rosparam file="$(find two_wheels_navigation)/param/operator.yaml"/>
       <rosparam file="$(find two_wheels_navigation)/param/costmap.yaml" ns="local_map" />
    </node>
 
 
    <!--  Start Mapper to generate map from laser scans  -->
-  <node name="Mapper" pkg="nav2d_karto" type="mapper">
+  <!--node name="Mapper" pkg="nav2d_karto" type="mapper">
     <rosparam file="$(find two_wheels_navigation)/param/mapper.yaml"/>
+  </node-->
+  <!-- Load the environment map in the map_server -->
+	<node name="MapServer" pkg="map_server" type="map_server" args="$(find two_wheels_navigation)/world/walls_map.yaml" />
+
+  <!-- Start particle filter to track the robot's position -->
+  <node name="SelfLocalizer" pkg="nav2d_localizer" type="localizer">
+    <remap from="scan" to="base_scan"/>
+    <param name="robot_frame" type="string" value="base_link"/>
+    <param name="min_particles" type="int" value="1000"/>
+    <param name="max_particles" type="int" value="4000"/>
+    <param name="min_translation" value="0.1"/>
+    <param name="min_rotation" value="0.05"/>
   </node>
 
 
@@ -50,7 +64,7 @@
 
   <node name="GetMap" pkg="nav2d_navigator" type="get_map_client" />
   <node name="Explore" pkg="nav2d_navigator" type="explore_client" />
-  <node name="SetGoal" pkg="nav2d_navigator" type="set_goal_client" /> 
+  <node name="SetGoal" pkg="nav2d_navigator" type="set_goal_client" />
 
 
    <!-- RVIZ to view the visualization -->
