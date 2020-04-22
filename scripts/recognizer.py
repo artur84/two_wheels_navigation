@@ -33,6 +33,8 @@ class GoogleRecognizer:
         https://developers.google.com/youtube/registering_an_application"""
         self.GOOGLE_KEY = 'AIzaSyBj-q9gPnBdvTbVLndF7YL-2jDx76wSW9k'
         # Other keys you can use
+        # AIzaSyD0egVAmnVHpF0puGQkJRPQ1hAShy60V8M
+        # AIzaSyCs0_WGdMvmRNr4Wl6M9Na4TfjboEomwac
         # AIzaSyAnGnFzW77_jdE-SwilZBQvAVdYkBcilPs
         # AIzaSyBj-q9gPnBdvTbVLndF7YL-2jDx76wSW9k
         # AIzaSyBGi56QfVDvkaEwPCf1hcW-zeQENmA352Q
