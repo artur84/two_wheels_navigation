@@ -1,36 +1,36 @@
 <launch>
 <!-- This launches the semi-autonomous navigation system for the two_wheels_description robot -->
-  
+
 	<param name="use_sim_time" value="true" />
 	<!-- Start the two wheels simulator -->
 	<!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <!--include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find two_wheels_description)/world/walls.world"/> 
+    <arg name="world_name" value="$(find two_wheels_description)/world/walls.world"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
     <arg name="headless" value="false"/--> <!-- Inert - see gazebo_ros_pkgs issue #491 -->
     <!--arg name="recording" value="false"/>
     <arg name="debug" value="false"/>
-  </include--> 
+  </include-->
 
   <!-- Add a necessary transformation to link odom and base_link frames -->
-  <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 10" />
+  <!--node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 10" /-->
 
   <!-- Start hector slam-->
-  <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
+  <!--arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
 
   <include file="$(find myhector_slam_config)/launch/mapping_default_ok.launch"/>
 
   <include file="$(find hector_geotiff)/launch/geotiff_mapper.launch">
     <arg name="trajectory_source_frame_name" value="scanmatcher_frame"/>
     <arg name="map_file_path" value="$(arg geotiff_map_file_path)"/>
-  </include>
+  </include-->
 
   <!--node pkg="two_wheels_navigation" type="velocity2odom.py" name="velocity2odom"/-->
-  
-  
-    
+
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0  0  0  0  0  0  base_link_simulated base_link 50"/>
+
 
 	<!-- NAV2D SEMI-AUTONOMOUS NAVIGATION-->
   <!-- Some general parameters -->
