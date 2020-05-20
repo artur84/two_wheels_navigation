@@ -1,6 +1,6 @@
 <!-- This launch file is intended to be used with the two_wheels_description package
 			To start a simulation you must first execute:
-			
+
 -->
 
 <launch>
@@ -8,11 +8,9 @@
 	<param name="use_sim_time" value="true" />
 	<rosparam file="$(find two_wheels_navigation)/param/ros.yaml"/>
 
-	<!-- Add a necessary transformation to link odom and base_link frames -->
-    <node pkg="tf" type="static_transform_publisher" name="foot_to_base" args="0 0 0 0 0 0    base_footprint base_link 30" />
+	<!-- Add a necessary transformations to link odom and base_link frames -->
+    <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0  0  0  0  0  0  base_link_simulated base_link 50"/>
 
-    <!-- Odometry node -->
-    <include file="$(find two_wheels_navigation)/launch/odometry.launch"/>
 
 
 	<!-- Start the Operator to control the simulated robot -->
@@ -23,7 +21,7 @@
 	</node>
 
 	<!-- Load the environment map in the map_server -->
-	<node name="MapServer" pkg="map_server" type="map_server" args="$(find two_wheels_navigation)/world/expo_cropped_map.yaml" />
+	<node name="MapServer" pkg="map_server" type="map_server" args="$(find two_wheels_navigation)/world/walls_map.yaml" />
 
 	<!-- Start particle filter to track the robot's position -->
 	<node name="SelfLocalizer" pkg="nav2d_localizer" type="localizer">
@@ -41,7 +39,7 @@
 
     <node name="GetMap" pkg="nav2d_navigator" type="get_map_client" />
     <node name="Explore" pkg="nav2d_navigator" type="explore_client" />
-  	<node name="SetGoal" pkg="nav2d_navigator" type="set_goal_client" />
+    <node name="SetGoal" pkg="nav2d_navigator" type="set_goal_client" />
 
 	<!-- Start the teleop_semiauto.py node-->
 	<node name="teleop_semiauto" pkg="two_wheels_navigation" type="teleop_semiauto.py" output="screen" respawn="true"/>
