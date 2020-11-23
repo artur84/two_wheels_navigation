@@ -44,7 +44,7 @@ class VelRemap():
 
 ############################### MAIN PROGRAM ####################################
 if __name__ == "__main__":
-    rospy.init_node("velocity2odom", anonymous=True)
+    rospy.init_node("vel_remap", anonymous=True)
     try:
 	    VelRemap()
     except:

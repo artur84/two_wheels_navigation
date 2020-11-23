@@ -1,0 +1,50 @@
+<!-- This launch file launches the nav2d tutorial1.launch using hector slam to get the odometry data -->
+<!-- This launches the semi-autonomous navigation system for the two_wheels_description robot -->
+<!-- to launch this you need first start the simulated robot -->
+
+<launch>
+
+
+    <param name="use_sim_time" value="true" />
+
+
+    <!-- Add a necessary transformation to link odom and base_link frames -->
+    <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 10" />
+
+    <!-- Start hector slam-->
+    <arg name="geotiff_map_file_path" default="$(find hector_geotiff)/maps"/>
+
+    <include file="$(find myhector_slam_config)/launch/mapping_default_ok.launch"/>
+
+    <include file="$(find hector_geotiff)/launch/geotiff_mapper.launch">
+        <arg name="trajectory_source_frame_name" value="scanmatcher_frame"/>
+        <arg name="map_file_path" value="$(arg geotiff_map_file_path)"/>
+    </include>
+
+
+
+
+	<!-- NAV2D SEMI-AUTONOMOUS NAVIGATION-->
+    <!-- Some general parameters -->
+	<rosparam file="$(find two_wheels_navigation)/param/ros.yaml"/>
+    <!-- Start the Operator to control the simulated robot -->
+	<node name="Operator" pkg="nav2d_operator" type="operator" >
+		<remap from="scan" to="base_scan"/>
+		<remap from="cmd_vel" to="cmd_vel_input"/>
+		<rosparam file="$(find two_wheels_navigation)/param/operator.yaml"/>
+		<rosparam file="$(find two_wheels_navigation)/param/costmap.yaml" ns="local_map" />
+	</node>
+
+    <!-- Start the teleoperation node -->
+    <node name="teleop_semiauto" pkg="two_wheels_navigation" type="teleop_semiauto.py" output="screen" />
+    
+    
+    <!-- Start the velocity remapper -->
+    <node name="vel_remap" pkg="two_wheels_navigation" type="vel_remap.py" output="screen" >
+        <remap from="cmd_vel_input" to="cmd_vel_input"/>
+    </node>
+
+	<!-- RVIZ to view the visualization -->
+	<node name="RVIZ" pkg="rviz" type="rviz" args=" -d $(find two_wheels_navigation)/param/tutorial1.rviz" />
+
+</launch>
