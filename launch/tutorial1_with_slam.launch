@@ -16,19 +16,12 @@
 
     <include file="$(find myhector_slam_config)/launch/mapping_default_ok.launch"/>
 
-    <include file="$(find hector_geotiff)/launch/geotiff_mapper.launch">
-        <arg name="trajectory_source_frame_name" value="scanmatcher_frame"/>
-        <arg name="map_file_path" value="$(arg geotiff_map_file_path)"/>
-    </include>
 
-
-
-
-	<!-- NAV2D SEMI-AUTONOMOUS NAVIGATION-->
+    <!-- NAV2D SEMI-AUTONOMOUS NAVIGATION-->
     <!-- Some general parameters -->
-	<rosparam file="$(find two_wheels_navigation)/param/ros.yaml"/>
+    <rosparam file="$(find two_wheels_navigation)/param/ros.yaml"/>
     <!-- Start the Operator to control the simulated robot -->
-	<node name="Operator" pkg="nav2d_operator" type="operator" >
+    <node name="Operator" pkg="nav2d_operator" type="operator" >
 		<remap from="scan" to="base_scan"/>
 		<remap from="cmd_vel" to="cmd_vel_input"/>
 		<rosparam file="$(find two_wheels_navigation)/param/operator.yaml"/>

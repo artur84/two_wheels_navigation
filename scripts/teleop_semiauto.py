@@ -64,8 +64,8 @@ if __name__ == "__main__":
     th = 0
     status = 0
     try:
-        print msg
-        print vels(speed, turn, mode)
+        print(msg)
+        print(vels(speed, turn, mode))
         key_vel = Twist()
         nav2d_cmd = cmd()
         while(1):
@@ -82,15 +82,15 @@ if __name__ == "__main__":
                 nav2d_cmd.Mode = mode
                 nav2d_cmd_pub.publish(nav2d_cmd)
 
-                print nav2d_cmd
+                print(nav2d_cmd)
 
             elif key == '+':
                 speed = speed + speed_inc
                 turn = turn + turn_inc
 
-                print vels(speed, turn, mode)
+                print(vels(speed, turn, mode))
                 if (status == 14):
-                    print msg
+                    print(msg)
                 status = (status + 1) % 15
 
 
@@ -98,9 +98,9 @@ if __name__ == "__main__":
                 speed = speed - speed_inc
                 turn = turn - turn_inc
 
-                print vels(speed, turn, mode)
+                print(vels(speed, turn, mode))
                 if (status == 14):
-                    print msg
+                    print(msg)
                 status = (status + 1) % 15
 
 
@@ -137,5 +137,5 @@ if __name__ == "__main__":
         vel_pub.publish(key_vel)
         nav2d_cmd_pub.publish(nav2d_cmd)
 
-        print key_vel
+        print(key_vel)
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
